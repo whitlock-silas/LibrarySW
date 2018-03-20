@@ -8,24 +8,21 @@ public class Library
 	public static void main(String args[])
 	{
 		Connection c = null;
-		String userInput ="";
-		String search = "";
 		int input = 0;
 		Scanner scanner = new Scanner(System.in);
 		try 
 		{	
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\whitl\\eclipse-workspace\\LibrarySW\\Userswhitleclipse-workspaceLibrarySW.db");
+			c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\whitl\\eclipse-workspace\\LibrarySW\\LibraryDB.db");
 			c.setAutoCommit(true);
 			
-			System.out.println("Opened database successfully");
+			System.out.println("Thank you for choosing LibraryDB");
 			String sql = "SELECT * FROM books;";//The Default option for users will be to view all books in the database
 			stmt = c.createStatement();
 	        ResultSet rs = stmt.executeQuery(sql);
 			 
-	        while(input != 999)
-	        {
-	        System.out.print("To view all books enter 1\nTo search a for book enter 2: ");
+	        
+	        System.out.print("To view all books enter 1:\nTo search a for book enter 2: ");
 	         input =  Integer.parseInt(scanner.nextLine());
 	         if(input == 1)
 	         {
@@ -37,20 +34,9 @@ public class Library
 	        	 input = Integer.parseInt(scanner.nextLine());
 	        	 titleSearch(input, rs, c);	
 	         }
-	         System.out.print("Are you finished?");
-	         userInput = scanner.nextLine();
-	         
-	         if(userInput == "y" || userInput == "Y")
-	         {
-	        	 System.out.println("Thank you for using LibraryDB");
-	        	 input = 999;
-	         } 
 	        
-	        }
-	         
-		
-				
-				
+	        
+	
 			stmt.close();
 			rs.close();
 	         c.close();
@@ -68,6 +54,7 @@ public class Library
 	{
 		
 		try {
+			System.out.println("\nBook ID");
 			while(rs.next())
 			{
 			int bookId = rs.getInt("bookID");
@@ -83,7 +70,8 @@ public class Library
 			}
 			else if(availability == 0)
 			{
-				available = "not available\n";
+				
+				available = "rented By" + rs.getString("rentedBy") + "\n";
 			}
 			
 			System.out.println("\n" + bookId + " " + title + " " + author + " " + available);
