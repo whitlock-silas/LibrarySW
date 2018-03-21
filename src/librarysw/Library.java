@@ -1,15 +1,17 @@
 package librarysw;
 import java.sql.*;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Library 
-{
+{	static Scanner scanner = new Scanner(System.in);
 	static Statement stmt = null;
 	public static void main(String args[])
 	{
 		Connection c = null;
 		int input = 0;
-		Scanner scanner = new Scanner(System.in);
+		
 		try 
 		{	
 			Class.forName("org.sqlite.JDBC");
@@ -88,7 +90,6 @@ public class Library
 	public static void titleSearch(int search, ResultSet rs, Connection c)
 	{
 	
-		Scanner scanner = new Scanner(System.in);
 		String input;
 		boolean flag = false;
 		try
@@ -113,14 +114,14 @@ public class Library
 					available = "is not available for renting";
 				}
 				
-				
 				System.out.print("\n"+author + "'s book "+title+ " "+available + "\n");
+				
 				if(flag)
 				{
 					input = scanner.nextLine();
 					if(input == "y" || input == "Y")
 					{
-						rentBook(rs, c);
+						rentBook(rs, c, search);
 						
 					}
 				}
@@ -132,9 +133,45 @@ public class Library
 		}
 	}
 	
-	public static void rentBook(ResultSet rs, Connection c)
-	{//enter user id to the rented by column of this book1
-		rs = stmt.executeQuery("INSERT INTO books(rentedBy) VALUES("+ +");");
+	public static void rentBook(ResultSet rs, Connection c, int bookId)
+	{
+		//Creates date formatter and gets local time
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		LocalDate time = LocalDate.now();
+		String name, searchName, telephone, address, state;
+		int cusID;
+		boolean flag = false;
+		try
+		{
+			
+			stmt = c.createStatement();
+		
+			System.out.print("Please enter first and last name: ");
+			name = scanner.next();
+			
+			rs = stmt.executeQuery("SELECT * FROM customers WHERE name ='" + name +"'; ");
+			
+			while(rs.next())
+			{
+				cusID = rs.getInt("cusID");
+				searchName = rs.getString("name");
+				telephone = rs.getString("telephone");
+				address = rs.getString("address");
+				state = rs.getString("state");
+			
+				System.out.println(cusID + " | " + searchName + " | " + telephone + " | " + address + " | " + state);
+				
+			}
+			
+			//executes query that updates who is renting, when they rented it, and availability of the book
+			rs = stmt.executeQuery("INSERT INTO books(rentedBy, lastRentedOn) VALUES("+ name +", "+ formatter.format(time) +") WHERE bookID="+ bookId + ";");
+			
+			
+		} catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 				
 	}
 	
