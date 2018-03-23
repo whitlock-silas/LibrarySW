@@ -21,7 +21,7 @@ public class Library
 		try 
 		{	//sets driver and gets connection to database
 			 Class.forName("org.sqlite.JDBC");
-			 c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\whitl\\eclipse-workspace\\LibrarySW\\LibraryDB.db");
+			 c = DriverManager.getConnection("jdbc:sqlite:LibraryDB.db");
 			 c.setAutoCommit(true);
 			//creates statement for stmt
 			 stmt = c.createStatement();
